@@ -68,11 +68,6 @@ remoteRepositorylist
               )
 )
 
-;(define (f1 x y)
-;  (+ (* 2 (expt x 2)) (* 3 y) 1))
-;(define (f2 x y)
-;  (+ (* x y) 1))
-
 (define named-functions
   (list (cons add add)
         (cons pull pull)
@@ -107,19 +102,21 @@ remoteRepositorylist
 
 
 (define (workspace->string lista)
-               lista              
+              ;(list "\n" lista "\n")
+  (list (list "Achivos en " (car lista)) ":\n" (string-join (cdr lista) "\n") "\n")
 )
 
 (define (index->string lista)
-               lista              
+               (list (list "Achivos en " (car lista)) ":\n" (string-join (cdr lista) "\n") "\n")              
 )
 
-(define (localRepsitory->String lista)
-               lista              
+(define (localRepsitory->String zona)
+              (list "\n" zona "\n")
+  
 )
 
 (define (remoteRepository->String zona)
-               zona              
+              (list (list "Achivos en " (car zona)) ":\n" (string-join (cdr zona) "\n"))
 )
 
 (define zonasString
@@ -135,6 +132,15 @@ remoteRepositorylist
     (if p
         (cdr p)
         (error "Función no encontrada"))))
+
+
+
+(define (slist->string slst)
+  (cond ((empty? slst) "")
+        ((empty? (rest slst)) (symbol->string (first slst)))
+        (else (string-append (symbol->string (first slst))
+                             " "
+                             (slist->string (rest slst))))))
 
 ;((name->function "three") 4 5)
 ;((git add) 4)
@@ -152,7 +158,6 @@ remoteRepositorylist
 ;(((git add) (list "file1.rkt" "file2.rkt")) localRepository) ; Ingresa elementos a LocalRepository
 ;(((git add) (list "file1.rkt" "file2.rkt")) remoteRepository) ; Ingresa elementos a RemoteRepository
 
-
 ; Se agregan elementos en workSpace
 (((git add) (list "file1.rkt" "file2.rkt" "file3.rkt" "file4.rkt")) workspace)
 
@@ -169,18 +174,58 @@ remoteRepositorylist
 (define suma (lambda (a) (lambda(b) (+ a b))))
 
 
-(write "Archivos de Workspace")
-((zonas->string workspace) (((git add) (list "file1.rkt" "file2.rkt" "file3.rkt" "file4.rkt")) workspace))
+(display "***********Resumen Workspace***********\n")
+(display (
+           (zonas->string workspace)
+(((git add) (list "file1.rkt" "file2.rkt" "file3.rkt" "file4.rkt")) workspace)))
 
-(write "Archivos de Index")
-(((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index)
+(display "\n***********Resumen Index***********\n")
+(display (
+           (zonas->string workspace)
+           (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index)
+           )
+         )
 
-(write "Commits Dentro de Local Repository")
+(display "\n***********Commits Dentro de Local Repository***********\n")
 ((zonas->string localRepository) (list (cdr (((git commit) "Primer Commit") (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index)))
         (cdr (((git commit) "Segundo Commit") (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index)))
         )
 )
 
-(write "Elementos Dentro de Remote Repository")
-((zonas->string remoteRepository) ((git push) (((git commit) "Primer Commit") (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index)))
+
+(display "\n***********Resumen Local Repository***********\n")
+(display (
+           (zonas->string localRepository)
+
+(append
+(((git commit) "Primer Commit") (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index))
+(((git commit) "Segundo Commit") (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index))
+)))
+
+(display "\n***********Resumen Remote Repository***********\n")
+;"Elementos Dentro de Remote Repository"
+(display (
+           (zonas->string remoteRepository)
+            ((git push) (((git commit) "Primer Commit") (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index)))
+           )
 )
+
+
+;(define strlist (list "red" "yellow" "blue" "green"))
+;(display (string-join strlist "\n "))
+;(slist->string '(red yellow blue green))
+
+
+;(define my-list '(a big dog))
+
+;; the easy way (has parens):
+;(~a my-list)
+
+;; slightly harder
+;(display (string-join (map ~a my-list) "'\n' "))
+
+
+;(define s (string-append "exa " "\n" " mple"))
+;(display s)
+
+;(display "\n First line\n Second Line\n")
