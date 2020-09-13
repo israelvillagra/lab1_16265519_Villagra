@@ -3,38 +3,29 @@
 ;   (comandoGit comando)
 ;  )
 ;)
-(define workspacelist(list "WorkSpace"))
+(define workspacelist(list "WorkSpace"));
 (define indexlist(list "Index"))
 (define localRepositorylist(list "Local Repository"))
 (define remoteRepositorylist(list "Remote Repository"))
 
-workspacelist
-indexlist
-localRepositorylist
-remoteRepositorylist
-
-(define comandoGit(lambda (comando)
-    (if (string? "add") "Add"
-      "Another")
-    )
-)
-
-;(define add(lambda (comando) 
-;  (if (list? comando) comando ;Verdadero
-;             3);Falso
-;   )
-;)
+;workspacelist
+;indexlist
+;localRepositorylist
+;remoteRepositorylist
 
 (define workspace(lambda (lista)
               (append workspacelist lista))
  )
 (define index(lambda (lista)
-              (append indexlist lista))
+              (append indexlist (cdr lista)))
  )
-
-(define localRepository(lambda (lista)
-              (append localRepositorylist lista))
- )
+;((((git commit) "miCommit") localRepository) (list "1" "2" "3"))
+(define localRepository(lambda (mensaje) (lambda (lista)
+                                         (append (list mensaje) (cdr lista))
+                                           )
+                         )
+  )
+ 
 
 (define remoteRepository(lambda (lista)
               (append remoteRepositorylist lista))
@@ -55,6 +46,15 @@ remoteRepositorylist
              )
 )
 
+
+;(define commit (lambda (mensaje) (lambda(lista)
+(define commit (lambda (mensaje) (lambda(lista)
+                                 ((localRepository (append remoteRepositorylist mensaje)) lista)
+                                   ;(append remoteRepositorylist lista)
+                                 )
+               )
+)
+
 (define (f1 x y)
   (+ (* 2 (expt x 2)) (* 3 y) 1))
 (define (f2 x y)
@@ -64,7 +64,7 @@ remoteRepositorylist
   (list (cons add add)
         (cons "two"  f2)
         (cons "three" (lambda (x y) (/ (f1 x y) (f2 x y))))
-        (cons "plus"  +)
+        (cons commit commit)
   )
 )
 
@@ -93,24 +93,31 @@ remoteRepositorylist
 ;((git add) 4)
 ;(((git add) (list “file1.rkt” “file2.rkt”)) zonas)
 ;((git add) (list "file1.rkt" "file2.rkt"))
-
 ;(((git add) (list "file1.rkt" "file2.rkt")) 0)
 
-
+;Validaciones
 ;(((git add1) (list "file1.rkt" "file2.rkt")) null) ; Función no encontrada
 ;(((git add) null) 0) ; Lista Nula
 ;(((git add) (list "file1.rkt" "file2.rkt")) null) ; Zona Nula
-
 
 ;(((git add) (list "file1.rkt" "file2.rkt")) workspace) ; Ingresa elementos a Workspace
 ;(((git add) (list "file1.rkt" "file2.rkt")) index) ; Ingresa elementos a Index
 ;(((git add) (list "file1.rkt" "file2.rkt")) localRepository) ; Ingresa elementos a LocalRepository
 ;(((git add) (list "file1.rkt" "file2.rkt")) remoteRepository) ; Ingresa elementos a RemoteRepository
 
+(write "Se agregan elementos al Workspace\n")
 (((git add) (list "file1.rkt" "file2.rkt")) workspace)
-(((git add) (list "file1.rkt" "file2.rkt")) index) 
-(((git add) (list "file1.rkt" "file2.rkt")) localRepository) 
-(((git add) (list "file1.rkt" "file2.rkt")) remoteRepository)
 
-;Ejemplo tomado de los apuntes de campus virtual
+(write "Se agregan elementos a Workspace, que son enviados a la zona Index")
+;Se agregan elementos a Workspace, que son enviados a la zona Index
+(((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index)
+
+(write "Se agregan del Index hacia Local Repository")
+(((git commit) "Primer Commit") (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index))
+
+;Ejemplo tomado de los videos campus virtual
 (define suma (lambda (a) (lambda(b) (+ a b))))
+
+;(((git commit) "miCommit") localRepository)
+;(((git commit) "miCommit") (list "1" "2" "3"))
+;
