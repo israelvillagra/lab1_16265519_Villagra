@@ -26,7 +26,6 @@
                          )
   )
  
-
 (define remoteRepository(lambda (lista)
               (append remoteRepositorylist (rest lista))
                           )
@@ -49,7 +48,8 @@
 
 
 (define commit(lambda (mensaje) (lambda(lista)
-                                 ((localRepository (append remoteRepositorylist mensaje)) lista)
+                                 (
+                                  (localRepository (append remoteRepositorylist mensaje)) lista)
                                  )
                )
 )
@@ -59,6 +59,10 @@
               )
 )
 
+(define pull(lambda(lista)
+               ((AddZone remoteRepository) lista)                
+              )
+)
 
 (define (f1 x y)
   (+ (* 2 (expt x 2)) (* 3 y) 1))
@@ -67,7 +71,7 @@
 
 (define named-functions
   (list (cons add add)
-        (cons "two"  f2)
+        (cons pull pull)
         (cons "three" (lambda (x y) (/ (f1 x y) (f2 x y))))
         (cons commit commit)
         (cons push push)
@@ -112,7 +116,7 @@
 ;(((git add) (list "file1.rkt" "file2.rkt")) remoteRepository) ; Ingresa elementos a RemoteRepository
 
 (write "Se agregan elementos al Workspace")
-(((git add) (list "file1.rkt" "file2.rkt")) workspace)
+(((git add) (list "file1.rkt" "file2.rkt" "file3.rkt" "file4.rkt")) workspace)
 
 (write "Se agregan elementos a Workspace, que son enviados a la zona Index")
 ;Se agregan elementos a Workspace, que son enviados a la zona Index
@@ -126,3 +130,4 @@
 
 ;Ejemplo tomado de los videos campus virtual
 (define suma (lambda (a) (lambda(b) (+ a b))))
+
