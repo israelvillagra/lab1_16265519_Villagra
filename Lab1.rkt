@@ -8,10 +8,10 @@
 (define localRepositorylist(list "Local Repository"))
 (define remoteRepositorylist(list "Remote Repository"))
 
-;workspacelist
-;indexlist
-;localRepositorylist
-;remoteRepositorylist
+workspacelist
+indexlist
+localRepositorylist
+remoteRepositorylist
 
 (define workspace(lambda (lista)
               (append workspacelist lista))
@@ -20,14 +20,11 @@
               (append indexlist (cdr lista)))
  )
 
-(define localRepository(lambda (mensaje) (lambda (lista)
-                                         (append (list mensaje) (cdr lista))
-                                           )
-                         )
-  )
+
  
 (define remoteRepository(lambda (lista)
-              (append remoteRepositorylist (rest lista))
+                          (append remoteRepositorylist (cdr (second lista)))
+                          ;(append remoteRepositorylist (cdr (second lista)))
                           )
  )
 
@@ -46,13 +43,20 @@
              )
 )
 
+(define localRepository(lambda (listaOrigen) (lambda (lista)
+                                         ;(append mensaje lista)
+                                          (append listaOrigen lista)
+                                           )
+                         )
+  )
 
 (define commit(lambda (mensaje) (lambda(lista)
-                                 (
-                                  (localRepository (append remoteRepositorylist mensaje)) lista)
-                                 )
-               )
-)
+                                  ;(list remoteRepositorylist (list mensaje (cdr lista)) )
+                                  ((localRepository remoteRepositorylist)(list (append (list mensaje) (cdr lista))))
+                                  ;(localRepository (append remoteRepositorylist mensaje)) lista)
+                                  )
+                )
+  )
 
 (define push(lambda(lista)
                ((AddZone remoteRepository) lista)                
@@ -131,3 +135,4 @@
 ;Ejemplo tomado de los videos campus virtual
 (define suma (lambda (a) (lambda(b) (+ a b))))
 
+(((git commit) "Primer Commit") (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index))
