@@ -19,7 +19,7 @@
 (define index(lambda (lista)
               (append indexlist (cdr lista)))
  )
-;((((git commit) "miCommit") localRepository) (list "1" "2" "3"))
+
 (define localRepository(lambda (mensaje) (lambda (lista)
                                          (append (list mensaje) (cdr lista))
                                            )
@@ -28,7 +28,8 @@
  
 
 (define remoteRepository(lambda (lista)
-              (append remoteRepositorylist lista))
+              (append remoteRepositorylist (rest lista))
+                          )
  )
 
 (define add(lambda (lista) (lambda (zona)
@@ -47,13 +48,17 @@
 )
 
 
-;(define commit (lambda (mensaje) (lambda(lista)
-(define commit (lambda (mensaje) (lambda(lista)
+(define commit(lambda (mensaje) (lambda(lista)
                                  ((localRepository (append remoteRepositorylist mensaje)) lista)
-                                   ;(append remoteRepositorylist lista)
                                  )
                )
 )
+
+(define push(lambda(lista)
+               ((AddZone remoteRepository) lista)                
+              )
+)
+
 
 (define (f1 x y)
   (+ (* 2 (expt x 2)) (* 3 y) 1))
@@ -65,6 +70,7 @@
         (cons "two"  f2)
         (cons "three" (lambda (x y) (/ (f1 x y) (f2 x y))))
         (cons commit commit)
+        (cons push push)
   )
 )
 
@@ -105,7 +111,7 @@
 ;(((git add) (list "file1.rkt" "file2.rkt")) localRepository) ; Ingresa elementos a LocalRepository
 ;(((git add) (list "file1.rkt" "file2.rkt")) remoteRepository) ; Ingresa elementos a RemoteRepository
 
-(write "Se agregan elementos al Workspace\n")
+(write "Se agregan elementos al Workspace")
 (((git add) (list "file1.rkt" "file2.rkt")) workspace)
 
 (write "Se agregan elementos a Workspace, que son enviados a la zona Index")
@@ -115,9 +121,8 @@
 (write "Se agregan del Index hacia Local Repository")
 (((git commit) "Primer Commit") (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index))
 
+(write "Se ingresan todos los elementos dentro de la Zona de trabajo Local Repository a Remote Repository")
+((git push) (((git commit) "Primer Commit") (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index)))
+
 ;Ejemplo tomado de los videos campus virtual
 (define suma (lambda (a) (lambda(b) (+ a b))))
-
-;(((git commit) "miCommit") localRepository)
-;(((git commit) "miCommit") (list "1" "2" "3"))
-;
