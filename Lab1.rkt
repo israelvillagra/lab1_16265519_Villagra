@@ -21,10 +21,8 @@ remoteRepositorylist
  )
 
 
- 
 (define remoteRepository(lambda (lista)
                           (append remoteRepositorylist (cdr (second lista)))
-                          ;(append remoteRepositorylist (cdr (second lista)))
                           )
  )
 
@@ -44,16 +42,13 @@ remoteRepositorylist
 )
 
 (define localRepository(lambda (listaOrigen) (lambda (lista)
-                                         ;(append mensaje lista)
                                           (append listaOrigen lista)
                                            )
                          )
   )
 
 (define commit(lambda (mensaje) (lambda(lista)
-                                  ;(list remoteRepositorylist (list mensaje (cdr lista)) )
-                                  ((localRepository remoteRepositorylist)(list (append (list mensaje) (cdr lista))))
-                                  ;(localRepository (append remoteRepositorylist mensaje)) lista)
+                                  ((localRepository localRepositorylist)(list (append (list mensaje) (cdr lista))))
                                   )
                 )
   )
@@ -99,24 +94,34 @@ remoteRepositorylist
         (error "Función no encontrada"))))
 
 
-
-
 (define (workspace->string lista)
               ;(list "\n" lista "\n")
-  (list (list "Achivos en " (car lista)) ":\n" (string-join (cdr lista) "\n") "\n")
+  (list (list "Achivos en" (car lista)) ":\n" (string-join (cdr lista) "\n") "\n")
 )
 
 (define (index->string lista)
-               (list (list "Achivos en " (car lista)) ":\n" (string-join (cdr lista) "\n") "\n")              
+               (list (list "Achivos en" (car lista)) ":\n" (string-join (cdr lista) "\n") "\n")
 )
 
+
+
+;****************************************************************************************************
 (define (localRepsitory->String zona)
-              (list "\n" zona "\n")
-  
+   (list "Archivos en" (car zona) ":\n" (map firstFile (rest zona)));(firstFile (rest zona)); (last zona))
 )
+
+(define (firstFile lista)
+  (if (empty? lista) "123"
+      (if (list? lista) (string-join lista "\n") "\n")
+   )
+  )
+  
+ ;****************************************************************************************************
+
 
 (define (remoteRepository->String zona)
-              (list (list "Achivos en " (car zona)) ":\n" (string-join (cdr zona) "\n"))
+               (list (list "Achivos en" (car zona)) ":\n" (string-join (cdr zona) "\n"))
+              ;(list (list "Achivos en" (car zona)) ":\n" (string-join (cdr zona) "\n"))
 )
 
 (define zonasString
@@ -131,9 +136,16 @@ remoteRepositorylist
   (let ((p (assoc name zonasString)))
     (if p
         (cdr p)
-        (error "Función no encontrada"))))
-
-
+        (error "Función no encontrada")))
+)
+(define (Anotherlist->string slst)
+  (cond ((empty? slst) "")
+        ((empty? (rest slst))
+         (symbol->string (first slst))
+         )
+        (else (string-append (symbol->string (first slst))
+                             " "
+                             (Anotherlist->string (rest slst))))))
 
 (define (slist->string slst)
   (cond ((empty? slst) "")
@@ -173,7 +185,6 @@ remoteRepositorylist
 ;Ejemplo tomado de los videos campus virtual
 (define suma (lambda (a) (lambda(b) (+ a b))))
 
-
 (display "***********Resumen Workspace***********\n")
 (display (
            (zonas->string workspace)
@@ -181,32 +192,27 @@ remoteRepositorylist
 
 (display "\n***********Resumen Index***********\n")
 (display (
-           (zonas->string workspace)
+           (zonas->string index)
            (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index)
            )
          )
 
-(display "\n***********Commits Dentro de Local Repository***********\n")
-((zonas->string localRepository) (list (cdr (((git commit) "Primer Commit") (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index)))
-        (cdr (((git commit) "Segundo Commit") (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index)))
-        )
-)
-
-
 (display "\n***********Resumen Local Repository***********\n")
 (display (
            (zonas->string localRepository)
-
+;           (((git commit) "Primer Commit") (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index))
 (append
 (((git commit) "Primer Commit") (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index))
-(((git commit) "Segundo Commit") (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index))
-)))
+(((git commit) "Segundo Commit") (((git add) (((git add) (list "file3.rkt" "file4.rkt")) workspace) ) index))
+)
+         )
+)
 
 (display "\n***********Resumen Remote Repository***********\n")
 ;"Elementos Dentro de Remote Repository"
 (display (
            (zonas->string remoteRepository)
-            ((git push) (((git commit) "Primer Commit") (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index)))
+           ((git push) (((git commit) "Primer Commit") (((git add) (((git add) (list "file1.rkt" "file2.rkt")) workspace) ) index)))
            )
 )
 
@@ -228,4 +234,3 @@ remoteRepositorylist
 ;(define s (string-append "exa " "\n" " mple"))
 ;(display s)
 
-;(display "\n First line\n Second Line\n")
